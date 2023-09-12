@@ -1,0 +1,233 @@
+<div class="row" style="padding-top: 100px;">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-3">
+                <p>Gidiş Havaalanı</p>
+
+                <select class="form-control" (change)="ChangeAirportFromWhere($event)">
+                    <option>Seçiniz...</option>
+                    <option [value]="data.id" *ngFor="let data of airportsList">
+                        {{ data.airportName }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-sm-3">
+                <p>Dönüş Havaalanı</p>
+
+                <select class="form-control" (change)="ChangeAirportToWhere($event)">
+                    <option>Seçiniz...</option>
+                    <option [value]="data.id" *ngFor="let data of airportsList">
+                        {{ data.airportName }}
+                    </option>
+                </select>
+            </div>
+           
+            <div class="col-sm-2">
+                <p>Gidiş Tarihi</p>
+
+                <input
+                  type="date"
+                  class="form-control"
+                  [(ngModel)]="selectedStartDateValue"
+                  (ngModelChange)="StartDateChange($event)" 
+                />
+            </div>
+
+            <div class="col-sm-2">
+                <p>Dönüş Tarihi</p>
+
+                <input
+                  type="date"
+                  class="form-control"
+                  [(ngModel)]="selectedEndDateValue"
+                  (ngModelChange)="EndDateChange($event)" 
+                />
+            </div>
+
+            <div class="col-sm-2" style="padding-top: 40px; text-align: right;">
+                <button type="submit" class="btn btn-primary" (click)="SearchFligths()">Arama Yap</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding-top: 100px;" *ngIf="searchedFlights != null">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                Gidiş
+                            </div>
+
+                            <div class="col-sm-7"></div>
+
+                            <div class="col-sm-3" style="text-align: right;">
+                                {{ selectedStartDateValue | date: 'dd.MM.yyyy' }}
+                            </div>
+                        </div>                
+                    </div>
+        
+                    <div class="card-body">
+                        <table style="width: 100%;">
+                            <ng-container *ngFor="let data of searchedFlights">
+                                <tr *ngIf="data.airportIdFromWhere == selectedAirportFromWhere" [ngClass]="{'clicked': data == clickedItem1}" (click)="onClickItem1(data)">
+                                    <td style="width: 250px;">
+                                        {{ data.planeName }} <br>
+                                        <b> {{ data.planeCode }} </b><br>
+                                        {{ data.planeCapacity }}
+                                    </td>
+    
+                                    <td style="width: 320px;">
+                                        <p><b>Kalkış Saati</b></p>
+                                        {{ data.flightStartDate | date: 'shortTime' }} <br>
+                                    </td>
+    
+                                    <td style="width: 320px;">
+                                        <p><b>Varış Saati</b></p>
+                                        {{ data.flightEndDate | date:'shortTime' }}
+                                    </td>
+    
+                                    <td style="width: 110px;">
+                                        <br>
+                                        <h5> {{ data.price }} TL </h5>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                Dönüş
+                            </div>
+    
+                            <div class="col-sm-7"></div>
+    
+                            <div class="col-sm-3" style="text-align: right;">
+                                {{ selectedEndDateValue | date: 'dd.MM.yyyy' }}
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="card-body">
+                        <table style="width: 100%;">
+                            <ng-container *ngFor="let data of searchedFlights">
+                                <tr *ngIf="data.airportIdToWhere == selectedAirportFromWhere" [ngClass]="{'clicked': data == clickedItem2}" (click)="onClickItem2(data)">
+                                    <td style="width: 250px;">
+                                        {{ data.planeName }} <br>
+                                        <b> {{ data.planeCode }} </b> <br>
+                                        {{ data.planeCapacity }} <br>
+                                    </td>
+    
+                                    <td style="width: 320px;">
+                                        <p><b>Kalkış Saati</b></p>
+                                        {{ data.flightStartDate | date: 'shortTime' }}
+                                    </td>
+    
+                                    <td style="width: 320px;">
+                                        <p><b>Varış Saati</b></p>
+                                        {{ data.flightEndDate | date:'shortTime' }}
+                                    </td>
+    
+                                    <td style="width: 110px;">
+                                        <br>
+                                        <h5> {{ data.price }} TL </h5>
+                                    </td>
+                                </tr>
+                            </ng-container>                           
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="clickedItem1 && clickedItem2" style="padding-top: 100px; text-align: right;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" [(ngModel)]="customerName" placeholder="Name" required>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" [(ngModel)]="customerSurname" placeholder="Surname" required>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" [(ngModel)]="customerPhone" placeholder="Phone" required>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" [(ngModel)]="customerMail" placeholder="Mail" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 7%; margin-top: 30px;"  (click)="Submit()">Kaydet</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" [ngStyle]="{ 'display': displayStyle }" style="width: 100%;">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Biletiniz başarıyla kaydedildi.</h4>
+            </div>
+            
+            <div class="modal-body" *ngFor="let data of bookDetails"> <br>
+                <!-- <div> <b> Bilet Kodu: </b> {{ data.bookCode }} </div> <br> <br> -->
+
+                <div style="margin-bottom: 50px;">
+                    <!-- <h6>Gidiş</h6> -->
+                    <hr>
+                    <table style="width: 100%; font-size: 14px;">
+                        <thead>               
+                            <tr style="font-weight: bold;">
+                                <td>Ad</td>
+                                <td>Soyad</td>
+                                <td>Uçak Kodu</td>
+                                <td>Uçak Adı</td>
+                                <td>Bagaj</td>
+                                <td>Nereden</td>
+                                <td>Nereye</td>
+                                <td>Tarih</td>
+                                <td>Kalkış Saati</td>
+                                <td>Varış Saati</td>
+                            </tr>
+                        </thead>
+          
+                        <tbody>
+                            <tr>
+                                <td> {{ data.customerName }} </td>
+                                <td> {{ data.customerSurname }} </td>
+                                <td> {{ data.planeCode }} </td>
+                                <td> {{ data.planeName }} </td>
+                                <td> {{ data.planeCapacity }} </td>
+                                <td> {{ data.airportNameFromWhere }} </td>
+                                <td> {{ data.airportNameToWhere }} </td>
+                                <td> {{ data.flightStartDate | date: 'dd.MM.yyyy' }} </td>
+                                <td> {{ data.flightStartDate | date: 'shortTime' }} </td>
+                                <td> {{ data.flightEndDate | date: 'shortTime' }} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>  <br> <br>
+            </div>
+      
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" (click)="closeModal()"> Close </button>
+            </div>
+        </div>
+    </div>
+    
+</div>
